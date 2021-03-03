@@ -63,7 +63,7 @@ class NumericalSemigroup:
             self.Frobenius = -1
         else:
             self.Frobenius = max(self.gaps)
-        self.AperySetWithRespectToTheMultiplicityElements = self.AperySet(min(self.gens))
+        self.AperySetWithRespectToTheMultiplicity = self.AperySet(min(self.gens))
         self.__lengthsets = {0: [0]}
         self.__factorizations = {}
         p = [0]*len(self.gens)
