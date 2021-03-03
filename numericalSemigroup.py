@@ -170,7 +170,7 @@ class NumericalSemigroup:
         if (math.gcd(n, gcd_list(self.gens)) != gcd_list(self.gens)):
             return False
         if (gcd_list(self.gens) == 1):
-            return (int(n) >= self.AperySetWithRespectToTheMultiplicityElements[int(n)%self.multiplicity])
+            return (int(n) >= self.AperySetWithRespectToTheMultiplicity[int(n)%self.multiplicity])
         else:
             newGens = [int(i/gcd_list(self.gens)) for i in self.gens]
             temp = NumericalSemigroup(newGens)
@@ -396,7 +396,7 @@ class NumericalSemigroup:
         return S_m.AperySet(max(self.gens))
     
     def isHarmonic(self):
-        return (self.AperySetWithRespectToTheMultiplicityElements == self.MApSet())
+        return (self.AperySetWithRespectToTheMultiplicity == self.MApSet())
     
     ### REDEFINING PROPERTIES ###
     def __eq__(self, other):
