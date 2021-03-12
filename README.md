@@ -30,3 +30,9 @@ The following is a selection of the functions that can be used to examine proper
 * `S.FactorizationsUpToElement(nmax)` will do the same thing as the above function, only for the factorizations
 
 There are other functions available, but I will let you play with it and see what you find.
+
+
+
+## Testing the package
+
+If you would like to make changes to the package and test that the base functionality hasn't been effected, you can `from testingPackage import*` and then call the function `runTests()`. If there are now problems, the function will print `Done` twice (from the struture theorem initialization of two semigroups), and then print `Success on all tests`. If there are any issues, the function will raise an exception. 
