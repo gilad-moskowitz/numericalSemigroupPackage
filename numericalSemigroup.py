@@ -244,8 +244,11 @@ class NumericalSemigroup:
             m_j_dict = {}
             for i in range(0, min(self.gens)):
                 M_i_dict[i] = self.__M_i(i)
-            for j in range(0, max(self.gens)):
-                m_j_dict[j] = self.__m_i(j)
+            m_j_dict[0] = self.__m_i(0)
+            j = max(self.gens) - 1
+            while(j > 0):
+                m_j_dict[(max(self.gens) - j)%max(self.gens)] = self.__m_i(j)
+                j -= 1
             self.__structureTheoremLS.append(M_i_dict)
             self.__structureTheoremLS.append(m_j_dict)
         return self.__structureTheoremLS
@@ -348,7 +351,6 @@ class NumericalSemigroup:
                 continue
         self.LengthSetPeriodicityBound = int(currentMax)
         
-    #TODO: ADD FUNCTIONALITY FOR DELTA SET
     def deltaSet(self):
         totalDeltaSet = []
         if(self.LengthSetPeriodicityBound == "Not Initialized"):
@@ -364,7 +366,6 @@ class NumericalSemigroup:
                     totalDeltaSet.append(self.__lengthsets[n][i + 1] - self.__lengthsets[n][i])
         return sorted(list(set(totalDeltaSet)))
     
-    #TODO: ADD PERODICITY OF MAX AND MIN LENGTH START
     def MApSet(self, j = 1):
         if(j < 1 or type(j) != int):
             raise Exception("There is no MAp set for j < 1")
@@ -377,7 +378,7 @@ class NumericalSemigroup:
             raise Exception("There is no mAp set for j < 1")
         G_M = self.S_m()
         ApSet = G_M.AperySet(max(self.gens), j)
-        return [i + max(self.gens)*min(G_M.LengthSet(i)) for i in ApSet]
+        return [max(self.gens)*min(G_M.LengthSet(i)) - i for i in ApSet]
     
     def S_M(self):
         if (len(self.gens) < 2):
@@ -431,6 +432,43 @@ class NumericalSemigroup:
     
     def Type(self):
         return len(self.PseudoFrobeniusNumbers())
+    
+    def __b_ij(self, j = 1):
+        S_M = self.S_M();
+        return S_M.AperySet(self.multiplicity, j)
+    
+    def __c_ij(self, j = 1):
+        S_m = self.S_m();
+        return S_m.AperySet(max(self.gens), j)
+    
+    def jthMaxLength(self, n, j = 1):
+        if(self.LengthSetPeriodicityBound == "Not Initialized"):
+            self.__startOfLSPeriodicity()
+        if(n > self.LengthSetPeriodicityBound):
+            return int((n - self.__b_ij(j)[n%self.multiplicity])/self.multiplicity)
+        else:
+            raise Exception("This function can only be called for integers greater than or equal to the start of length set periodicity")
+
+    def jthMinLength(self, n, j = 1):
+        if(self.LengthSetPeriodicityBound == "Not Initialized"):
+            self.__startOfLSPeriodicity()
+        if(n > self.LengthSetPeriodicityBound):
+            return int((n + self.__c_ij(j)[-(n%max(self.gens))])/max(self.gens))
+        else:
+            raise Exception("This function can only be called for integers greater than or equal to the start of length set periodicity")
+            
+    def gcdDeltaSet(self):
+        if (len(self.gens) < 2):
+            raise Exception("There is no delta set for a semigroup with only one generator")
+        S_M_gens = [self.gens[i]-self.gens[0] for i in range(1, len(self.gens))]
+        return gcd_list(S_M_gens)
+    
+    #Length Density stuff
+    def LengthDensity(self, n):
+        if(self.__structureTheoremInitialized and n > self.LengthSetPeriodicityBound):
+            return ((1/self.gcdDeltaSet()) - (((len(self.__structureTheoremLS[0][n%self.multiplicity])) + len(self.__structureTheoremLS[1][n%max(self.gens)]))/(self.jthMaxLength(n) - self.jthMinLength(n))))
+        else:
+            return (((len(self.LengthSet(n)) - 1))/(max(self.LengthSet(n)) - min(self.LengthSet(n))))
     
     ### REDEFINING PROPERTIES ###
     def __eq__(self, other):
