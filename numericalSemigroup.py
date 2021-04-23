@@ -1,4 +1,5 @@
 import math
+import random
 #MATH FUNCTIONS NECESSARY:
 def gcd_list(integers):
     listToUse = [i for i in integers]
@@ -252,6 +253,22 @@ class NumericalSemigroup:
             self.__structureTheoremLS.append(M_i_dict)
             self.__structureTheoremLS.append(m_j_dict)
         return self.__structureTheoremLS
+    
+    def RandomSemigroup(numberOfGens, largestValue):
+        tempGens = []
+        for i in range(1, numberOfGens):
+            tempGens.append(random.randint(1, largestValue + 1))
+        if(gcd_list(tempGens) == 1):
+            tempGens.append(random.randint(1, largestValue + 1))
+        else:
+            while(gcd_list(tempGens) != 1):
+                additionalGen = random.randint(1, largestValue + 1)
+                newTemp = [i for i in tempGens]
+                newTemp.append(additionalGen)
+                if(gcd_list(newTemp) == 1):
+                    tempGens.append(additionalGen)
+        S = NumericalSemigroup(tempGens)
+        return NumericalSemigroup(S.minimalGenerators())
     
     def __M_i(self, i):
         Mi = []
